@@ -1,62 +1,53 @@
-import { createContext, useState } from "react";
+import { createContext, useReducer } from "react";
 
-// Step 1: Define the context
+type CalculatorAction =
+	| { type: "SET_VALUE"; payload: number }
+	| { type: "ADD"; payload: number }
+	| { type: "SUBTRACT"; payload: number }
+	| { type: "MULTIPLY"; payload: number }
+	| { type: "DIVIDE"; payload: number }
+	| { type: "EVALUATE_EXPRESSION"; payload: string };
+
 export type CalculatorContextType = {
 	value: number;
-	updateValue: (newValue: number) => void;
-	add: (number: number) => void;
-	subtract: (number: number) => void;
-	multiply: (number: number) => void;
-	divide: (number: number) => void;
-	evaluateExpression: (string: string) => void;
+	dispatch: React.Dispatch<CalculatorAction>;
 };
 
 export const CalculatorContext = createContext<CalculatorContextType | undefined>(undefined);
 
-// Step 2: Implement the provider component
+const calculatorReducer = (state: number, action: CalculatorAction): number => {
+	switch (action.type) {
+		case "SET_VALUE":
+			return action.payload;
+		case "ADD":
+			return state + action.payload;
+		case "SUBTRACT":
+			return state - action.payload;
+		case "MULTIPLY":
+			return state * action.payload;
+		case "DIVIDE":
+			return state / action.payload;
+		case "EVALUATE_EXPRESSION":
+			try {
+				return eval(action.payload);
+			} catch (error) {
+				console.error("Error evaluating expression:", error);
+				return state;
+			}
+		default:
+			return state;
+	}
+};
+
 type CalculatorProviderProps = {
 	children: React.ReactNode;
 };
 export const CalculatorProvider: React.FC<CalculatorProviderProps> = ({ children }) => {
-	const [value, setValue] = useState(0);
-
-	const updateValue = (newValue: number) => {
-		setValue(newValue);
-	};
-
-	const add = (number: number) => {
-		setValue(value + number);
-	};
-
-	const subtract = (number: number) => {
-		setValue(value - number);
-	};
-
-	const multiply = (number: number) => {
-		setValue(value * number);
-	};
-
-	const divide = (number: number) => {
-		setValue(value / number);
-	};
-
-	const evaluateExpression = (expression: string) => {
-		try {			
-			const result = eval(expression);			
-			setValue(result);
-		} catch (error) {
-			console.error("Error evaluating expression:", error);			
-		}
-	};
+	const [value, dispatch] = useReducer(calculatorReducer, 0);
 
 	const calculatorContextValue: CalculatorContextType = {
 		value,
-		updateValue,
-		add,
-		subtract,
-		multiply,
-		divide,
-		evaluateExpression,
+		dispatch,
 	};
 
 	return <CalculatorContext.Provider value={calculatorContextValue}>{children}</CalculatorContext.Provider>;

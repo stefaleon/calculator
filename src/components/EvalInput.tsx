@@ -3,14 +3,14 @@ import { useCalculator } from "../context/useCalculator";
 
 const EvalInput: React.FC = () => {
 	const [inputValue, setInputValue] = useState("");
-	const { evaluateExpression } = useCalculator();
+	const { dispatch } = useCalculator();
 
 	const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		setInputValue(event.target.value);
 	};
 
 	const handleEvaluate = () => {
-		evaluateExpression(inputValue);
+		dispatch({ type: 'EVALUATE_EXPRESSION', payload: inputValue })
 		setInputValue("");
 	};
 
