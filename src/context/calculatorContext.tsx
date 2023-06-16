@@ -8,6 +8,7 @@ export type CalculatorContextType = {
 	subtract: (number: number) => void;
 	multiply: (number: number) => void;
 	divide: (number: number) => void;
+	evaluateExpression: (string: string) => void;
 };
 
 export const CalculatorContext = createContext<CalculatorContextType | undefined>(undefined);
@@ -39,6 +40,15 @@ export const CalculatorProvider: React.FC<CalculatorProviderProps> = ({ children
 		setValue(value / number);
 	};
 
+	const evaluateExpression = (expression: string) => {
+		try {			
+			const result = eval(expression);			
+			setValue(result);
+		} catch (error) {
+			console.error("Error evaluating expression:", error);			
+		}
+	};
+
 	const calculatorContextValue: CalculatorContextType = {
 		value,
 		updateValue,
@@ -46,6 +56,7 @@ export const CalculatorProvider: React.FC<CalculatorProviderProps> = ({ children
 		subtract,
 		multiply,
 		divide,
+		evaluateExpression,
 	};
 
 	return <CalculatorContext.Provider value={calculatorContextValue}>{children}</CalculatorContext.Provider>;
