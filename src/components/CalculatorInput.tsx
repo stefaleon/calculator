@@ -9,41 +9,21 @@ const CalculatorInput: React.FC = () => {
 		setInputValue(event.target.value);
 	};
 
-	const handleAdd = () => {
+	const handleOperation = (operation: (number: number) => void) => {
 		const number = parseFloat(inputValue);
 		if (!isNaN(number)) {
-			add(number);
-		}
-	};
-
-	const handleSubtract = () => {
-		const number = parseFloat(inputValue);
-		if (!isNaN(number)) {
-			subtract(number);
-		}
-	};
-
-	const handleMultiply = () => {
-		const number = parseFloat(inputValue);
-		if (!isNaN(number)) {
-			multiply(number);
-		}
-	};
-
-	const handleDivide = () => {
-		const number = parseFloat(inputValue);
-		if (!isNaN(number) && number !== 0) {
-			divide(number);
+			operation(number);
+			setInputValue("");
 		}
 	};
 
 	return (
 		<div>
 			<input type="number" value={inputValue} onChange={handleInputChange} />
-			<button onClick={handleAdd}>+</button>
-			<button onClick={handleSubtract}>-</button>
-			<button onClick={handleMultiply}>x</button>
-			<button onClick={handleDivide}>/</button>
+			<button onClick={() => handleOperation(add)}>Add</button>
+			<button onClick={() => handleOperation(subtract)}>Subtract</button>
+			<button onClick={() => handleOperation(multiply)}>Multiply</button>
+			<button onClick={() => handleOperation(divide)}>Divide</button>
 		</div>
 	);
 };
